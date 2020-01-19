@@ -19,7 +19,7 @@ module testMemory;
 		.Clock(Clock), 
 		.Select(Select), 
 		.RW(RW), 
-		.Bus(Bus)
+		.DataBus(Bus)
 	);
 
 	assign Bus = RW? value: 'bz;

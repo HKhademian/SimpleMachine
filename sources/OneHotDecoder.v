@@ -1,13 +1,10 @@
 module OneHotDecoder #(
-	parameter N = 3, Level= 1'b1
+	parameter N = 3,
+	localparam COUNT = 2**N
 ) (
-	Input, Output
+	input [COUNT-1:0] Input,
+	output [N-1:0] Output
 );
-	localparam COUNT = 2**N;
-
-	input [COUNT-1:0] Input;
-	output [N-1:0] Output;
-	
 	reg [N-1:0] value;
 	assign Output = value;
 	

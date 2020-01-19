@@ -1,4 +1,7 @@
-module Computer(ResetN, Clock);
+module Computer(
+	input ResetN,
+	input Clock
+);
 	localparam N = 8, M = 2, COUNT = 2**M, OP_LEN=20;
 	
 	wire [M-1:0] memSelect;
@@ -11,7 +14,7 @@ module Computer(ResetN, Clock);
 		.ResetN(ResetN),
 		.Clock(Clock),
 		.Select(memSelect),
-		.Data(memData),
+		.DataBus(memData),
 		.RW(memRW)
 	);
 	
