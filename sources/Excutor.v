@@ -14,7 +14,11 @@ module Excutor #(
 	localparam OP_SHL_REG    = 4'b1101, // Shl R1, C     ==> R1 = R1 << R2
 	localparam OP_SHR_REG    = 4'b1110, // Shr R1, C     ==> R1 = R1 >> R2
 	localparam OP_MUL_CONST  = 4'b0111, // Mul R1, C     ==> [RD:RA] = R1*C
-	localparam OP_MUL_REG    = 4'b1000 // Mul R1, R2    ==> [RD:RA] = R1*R2
+	localparam OP_MUL_REG    = 4'b1000, // Mul R1, R2    ==> [RD:RA] = R1*R2
+	localparam REG_A         = 8'b00000001, // RegisterA address
+	localparam REG_B         = 8'b00000010, // RegisterB address
+	localparam REG_C         = 8'b00000100, // RegisterC address
+	localparam REG_D         = 8'b00001000 // RegisterD address
 ) (
 	input ResetN, // async reset
 	input Clock, // posedge Clock pulse
@@ -25,8 +29,9 @@ module Excutor #(
 	output reg Done // Done signal
 );	
 	
-	reg [7:0] Timer = 0; // supports 2^3 Timing Steps
+	reg [3-1:0] Timer = 0; // supports 2^3 Timing Steps
 	reg [N-1:0] memValue = 0;
+	reg [2*N-2:0] memTemp = 0;
 	assign MemoryData = MemoryRW? memValue: {N{1'bz}};
 	
 	wire [  3:0] Part0 = OpCode[19:16];
@@ -39,30 +44,31 @@ module Excutor #(
 	
 	always @(negedge ResetN, posedge Clock)
 		if(!ResetN) begin
+			memValue <= 0;
+			memTemp <= 0;
+			MemoryRW <= 0;
 			Timer <= 0;
-			MemoryRW <= 0;
-			Done <= 0;
+			Done <= 1;
 		end else begin
-			MemoryRW <= 0;
-			Done <= 0;
-			
 			case(Part0)
-				default: begin
-					Timer <= 0;
+				default: begin // if no implemented op is detected signal DONE to get next
 					MemoryRW <= 0;
-					Done <= 0;
+					Timer <= 0;
+					Done <= 1;
 				end
 				
 				OP_LOAD_CONST: begin:OpLoadConst
 					case(Timer)
-						0: begin:step0
+						0: begin:step0 // Write CONST to R1
 							MemoryRW <= 1;
 							MemorySelect <= R1Address;
 							memValue <= Part2;
 							Timer <= Timer+1;
+							Done <= 0;
 						end:step0
-						1: begin:step1
+						1: begin:step1 // Signal DONE
 							MemoryRW <= 0;
+							Timer <= 0;
 							Done <= 1;
 						end:step1
 					endcase
@@ -70,19 +76,22 @@ module Excutor #(
 				
 				OP_LOAD_REG: begin:OpLoadReg
 					case(Timer)
-						0: begin:step0
+						0: begin:step0 // Read R2
 							MemoryRW <= 0;
 							MemorySelect <= R2Address;
 							Timer <= Timer+1;
+							Done <= 0;
 						end:step0
-						1: begin:step1
+						1: begin:step1 // Write readed value to R1
 							memValue <= MemoryData;
 							MemoryRW <= 1;
 							MemorySelect <= R1Address;
 							Timer <= Timer+1;
+							Done <= 0;
 						end:step1
-						2: begin:step2
+						2: begin:step2 // signal DONE
 							MemoryRW <= 0;
+							Timer <= 0;
 							Done <= 1;
 						end:step2
 					endcase
@@ -90,25 +99,279 @@ module Excutor #(
 				
 				OP_ADD_CONST: begin:OpAddConst
 					case(Timer)
-						0: begin:step0
+						0: begin:step0 // read R1
 							MemoryRW <= 0;
 							MemorySelect <= R1Address;
 							Timer <= Timer+1;
+							Done <= 0;
 						end:step0
-						1: begin:step1
+						1: begin:step1 // write R1+CONST to R1
 							MemoryRW <= 1;
 							MemorySelect <= R1Address;
 							memValue <= MemoryData + Part2;
 							Timer <= Timer+1;
+							Done <= 0;
 						end:step1
-						2: begin:step2
+						2: begin:step2 // signal DONE
 							MemoryRW <= 0;
+							Timer <= 0;
 							Done <= 1;
 						end:step2
 					endcase
 				end:OpAddConst
 				
+				OP_ADD_REG: begin:OpAddReg
+					case(Timer)
+						0: begin:step0 // read R2
+							MemoryRW <= 0;
+							MemorySelect <= R2Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // save R2 value and read R1
+							memValue <= MemoryData;
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						1: begin:step2 // write R1+R2 to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= memValue + MemoryData;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step2
+						2: begin:step3 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step3
+					endcase
+				end:OpAddReg
 				
+				OP_SUB_CONST: begin:OpSubConst
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // write R1-CONST to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= MemoryData - Part2;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step2
+					endcase
+				end:OpSubConst
+				
+				OP_SUB_REG: begin:OpSubReg
+					case(Timer)
+						0: begin:step0 // read R2
+							MemoryRW <= 0;
+							MemorySelect <= R2Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // save R2 value and read R1
+							memValue <= MemoryData;
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // write R1-R2 to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= MemoryData - memValue;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step2
+						3: begin:step3 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step3
+					endcase
+				end:OpSubReg
+				
+				
+				OP_MUL_CONST: begin:OpMulConst
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // write lower byte to RegA and save upper
+							memTemp <= MemoryData * Part2;
+							MemoryRW <= 1;
+							MemorySelect <= REG_A;
+							memValue <= memTemp[7:0];
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // write upper byte to RegD
+							MemoryRW <= 1;
+							MemorySelect <= REG_D;
+							memValue <= memTemp[15:8];
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step2
+						3: begin:step3 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step3
+					endcase
+				end:OpMulConst
+				
+				OP_MUL_REG: begin:OpMulReg
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // save R1 value and read R2
+							memValue <= MemoryData;
+							MemoryRW <= 0;
+							MemorySelect <= R2Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // write lower byte to RegA and save upper
+							memTemp <= MemoryData * memValue;
+							MemoryRW <= 1;
+							MemorySelect <= REG_A;
+							memValue <= memTemp[7:0];
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step2
+						3: begin:step3 // write upper byte to RegD
+							MemoryRW <= 1;
+							MemorySelect <= REG_D;
+							memValue <= memTemp[15:8];
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step3
+						4: begin:step4 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step4
+					endcase
+				end:OpMulReg
+				
+				OP_DIV_CONST: begin:OpDivConst
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // write R1/CONST to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= MemoryData / Part2;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step2
+					endcase
+				end:OpDivConst
+				
+				OP_DIV_REG: begin:OpDivReg
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // save R1 value and read R2
+							memValue <= MemoryData;
+							MemoryRW <= 0;
+							MemorySelect <= R2Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // write R1/R2 to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= memValue / MemoryData;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step2
+						3: begin:step3 // signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step3
+					endcase
+				end:OpDivReg
+				
+				OP_SHL_CONST: begin:OpShiftLeftConst
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // Write R1<<CONST to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= (MemoryData<<Part2);
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // Signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step2
+					endcase
+				end:OpShiftLeftConst
+				
+				OP_SHR_CONST: begin:OpShiftRightConst
+					case(Timer)
+						0: begin:step0 // read R1
+							MemoryRW <= 0;
+							MemorySelect <= R1Address;
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step0
+						1: begin:step1 // Write R1>>CONST to R1
+							MemoryRW <= 1;
+							MemorySelect <= R1Address;
+							memValue <= (MemoryData>>Part2);
+							Timer <= Timer+1;
+							Done <= 0;
+						end:step1
+						2: begin:step2 // Signal DONE
+							MemoryRW <= 0;
+							Timer <= 0;
+							Done <= 1;
+						end:step2
+					endcase
+				end:OpShiftRightConst
+
 			endcase
 		end
 

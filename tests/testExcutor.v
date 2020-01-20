@@ -36,6 +36,7 @@ module testExcutor;
 		
 		wait(!Clock);
 		OpCode = 20'b0001_00000010_10101010;
+		#25;
 		wait(Done);
 		OpCode = 0;
 		#25;
@@ -43,6 +44,7 @@ module testExcutor;
 		wait(!Clock);
 		OpCode = 20'b0001_00000001_00000000;
 		OpCode[7:0] = 74;
+		#25;
 		wait(Done);
 		OpCode = 0;
 		#25;
@@ -55,24 +57,53 @@ module testExcutor;
 		
 		wait(!Clock);
 		OpCode = 20'b0011_00000001_00000001;
+		#25;
 		wait(Done);
 		OpCode = 0;
 		#25;
 		
 		wait(!Clock);
 		OpCode = 20'b0011_00000001_00000001;
+		#25;
+		wait(Done);
+		OpCode = 0;
+		#25;
+		
+		
+		
+		
+		wait(!Clock);
+		OpCode = 20'b0001_00000001_00000000; // R0=0
+		#25;
+		wait(Done);
+		OpCode = 0;
+		#25;
+
+		
+		wait(!Clock);
+		OpCode = 20'b0011_00000001_00000111; // R0+=7
+		#25;
 		wait(Done);
 		OpCode = 0;
 		#25;
 		
 		wait(!Clock);
-		OpCode = 20'b0011_00000001_00000001;
+		OpCode = 20'b0011_00000001_00000111; // R0+=7
+		#25;
 		wait(Done);
 		OpCode = 0;
 		#25;
-		
+
 		wait(!Clock);
-		OpCode = 20'b0011_00000001_00000001;
+		OpCode = 20'b0101_00000001_00000011; // R0-=3
+		#25;
+		wait(Done);
+		OpCode = 0;
+		#25;
+
+		wait(!Clock);
+		OpCode = 20'b0101_00000001_00000001; // R0-=1
+		#25;
 		wait(Done);
 		OpCode = 0;
 		#25;

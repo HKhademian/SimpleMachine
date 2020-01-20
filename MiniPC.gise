@@ -90,8 +90,9 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1579468520" xil_pn:in_ck="-4812519372661263456" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1579468520">
+    <transform xil_pn:end_ts="1579498221" xil_pn:in_ck="-4812519372661263456" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1579498221">
       <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="sources/Computer.v"/>
       <outfile xil_pn:name="sources/Excutor.v"/>
@@ -115,7 +116,7 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1579468520" xil_pn:in_ck="-4812519372661263456" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1579468520">
+    <transform xil_pn:end_ts="1579498221" xil_pn:in_ck="-4812519372661263456" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1579498221">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="sources/Computer.v"/>
@@ -128,11 +129,9 @@
       <outfile xil_pn:name="tests/testOneHotDecoder.v"/>
       <outfile xil_pn:name="tests/testOneHotEncoder.v"/>
     </transform>
-    <transform xil_pn:end_ts="1579468522" xil_pn:in_ck="-4812519372661263456" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="347389969069438962" xil_pn:start_ts="1579468520">
+    <transform xil_pn:end_ts="1579498225" xil_pn:in_ck="-4812519372661263456" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="347389969069438962" xil_pn:start_ts="1579498221">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="fuse.log"/>
       <outfile xil_pn:name="isim"/>
       <outfile xil_pn:name="isim.log"/>
@@ -140,11 +139,9 @@
       <outfile xil_pn:name="testExcutor_isim_beh.exe"/>
       <outfile xil_pn:name="xilinxsim.ini"/>
     </transform>
-    <transform xil_pn:end_ts="1579468522" xil_pn:in_ck="-6649978573058539465" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-4661847810580718123" xil_pn:start_ts="1579468522">
+    <transform xil_pn:end_ts="1579498226" xil_pn:in_ck="-6649978573058539465" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-4661847810580718123" xil_pn:start_ts="1579498225">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="isim.cmd"/>
       <outfile xil_pn:name="isim.log"/>
       <outfile xil_pn:name="testExcutor_isim_beh.wdb"/>
