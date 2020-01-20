@@ -10,12 +10,13 @@ module Memory #(
 	input RW // R=0/W=1 mode selector
 );
 	
-	reg [M-1:0] Address=0; // holds address of last clock
+	//reg [M-1:0] Address=0; // holds address of last clock
+	wire [M-1:0] Address = Select;
 	wire [N-1:0] data; // local data bus ready to write in bus (if in Read mode)
 	assign DataBus = RW==1 ? {N{1'bz}} : !ResetN? {N{1'b0}}: data; // writes data to DataBus if in read mode else high-impedance to allow reads
 
-	always @(negedge ResetN, posedge Clock)
-		Address=!ResetN?0:Select;
+	//always @(negedge ResetN, posedge Clock)
+	//	Address=!ResetN?0:Select;
 
 	genvar k; // generative aproach, we can have as many registers as we want (choose by M param)
 	localparam COUNT = 2**M;
