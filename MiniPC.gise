@@ -75,6 +75,7 @@
     <file xil_pn:fileType="FILE_XRPT" xil_pn:name="main_xst.xrpt"/>
     <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_ISIM_EXE" xil_pn:name="testExcutor_isim_beh.exe"/>
     <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="testExcutor_stx_beh.prj"/>
+    <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_ISIM_EXE" xil_pn:name="testFloater_isim_beh.exe"/>
     <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_ISIM_EXE" xil_pn:name="testMemory_isim_beh.exe"/>
     <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="testMemory_stx_beh.prj"/>
     <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="testOneHotDecoder_beh.prj"/>
@@ -87,49 +88,53 @@
   </files>
 
   <transforms xmlns="http://www.xilinx.com/XMLSchema">
-    <transform xil_pn:end_ts="1579538749" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547224" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1579538749" xil_pn:in_ck="2316383412397001557" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547224" xil_pn:in_ck="1450705740460528108" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="sources/Excutor.v"/>
+      <outfile xil_pn:name="sources/Floater.v"/>
       <outfile xil_pn:name="sources/Memory.v"/>
       <outfile xil_pn:name="sources/OneHotDecoder.v"/>
       <outfile xil_pn:name="sources/OneHotEncoder.v"/>
       <outfile xil_pn:name="tests/instructions.v"/>
       <outfile xil_pn:name="tests/testExcutor.v"/>
+      <outfile xil_pn:name="tests/testFloater.v"/>
       <outfile xil_pn:name="tests/testMemory.v"/>
       <outfile xil_pn:name="tests/testOneHotDecoder.v"/>
       <outfile xil_pn:name="tests/testOneHotEncoder.v"/>
     </transform>
-    <transform xil_pn:end_ts="1579538749" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="2343291070478034060" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547224" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="2343291070478034060" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1579538749" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-6210597405015691464" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547224" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-6210597405015691464" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1579538749" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="-1925826301570943826" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547224" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="-1925826301570943826" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1579538749" xil_pn:in_ck="2316383412397001557" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547224" xil_pn:in_ck="1450705740460528108" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="sources/Excutor.v"/>
+      <outfile xil_pn:name="sources/Floater.v"/>
       <outfile xil_pn:name="sources/Memory.v"/>
       <outfile xil_pn:name="sources/OneHotDecoder.v"/>
       <outfile xil_pn:name="sources/OneHotEncoder.v"/>
       <outfile xil_pn:name="tests/instructions.v"/>
       <outfile xil_pn:name="tests/testExcutor.v"/>
+      <outfile xil_pn:name="tests/testFloater.v"/>
       <outfile xil_pn:name="tests/testMemory.v"/>
       <outfile xil_pn:name="tests/testOneHotDecoder.v"/>
       <outfile xil_pn:name="tests/testOneHotEncoder.v"/>
     </transform>
-    <transform xil_pn:end_ts="1579538751" xil_pn:in_ck="2316383412397001557" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-984062321320884696" xil_pn:start_ts="1579538749">
+    <transform xil_pn:end_ts="1579547226" xil_pn:in_ck="1450705740460528108" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-984062321320884696" xil_pn:start_ts="1579547224">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="fuse.log"/>
@@ -139,7 +144,7 @@
       <outfile xil_pn:name="isim.log"/>
       <outfile xil_pn:name="xilinxsim.ini"/>
     </transform>
-    <transform xil_pn:end_ts="1579538751" xil_pn:in_ck="5782089116072693147" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-5964437210837746485" xil_pn:start_ts="1579538751">
+    <transform xil_pn:end_ts="1579547226" xil_pn:in_ck="-4419671058689312393" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-5964437210837746485" xil_pn:start_ts="1579547226">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="instructions_isim_beh.wdb"/>

@@ -41,10 +41,12 @@ module Excutor #(
 	wire [  3:0] Part0 = OpCode[19:16];
 	wire [N-1:0] Part1 = OpCode[15: 8];
 	wire [N-1:0] Part2 = OpCode[ 7: 0];
+	wire [15:0] Float;
 
 	wire [2:0] R1Address, R2Address;
 	OneHotDecoder #(3) r1decode ( Part1, R1Address );
 	OneHotDecoder #(3) r2decode ( Part2, R2Address );
+	Floater floater ( Part1, Part2, Float );
 	
 	always @(negedge ResetN, posedge Clock)
 		if(!ResetN) begin
@@ -422,6 +424,35 @@ module Excutor #(
 						end:step2
 					endcase
 				end:OpShiftRightConst
+				
+				OP_FLOAT: begin:OpFloat
+					case(Timer)
+						0: begin:step0 //save exponent to RC
+							Output = Float;
+							MemoryRW = 0;
+							MemorySelect = REG_C;
+							MemoryRW = 1;
+							memValue = Output[14:7];
+							Timer = Timer+1;
+							Done = 0;
+						end:step0
+						1: begin:step1 // save mantis to RB
+							MemoryRW = 0;
+							MemorySelect = REG_B;
+							MemoryRW = 1;
+							memValue = {0, Output[6:0]};
+							Timer = Timer+1;
+							Done = 0;
+						end:step1
+						2: begin:step2 // Signal DONE
+							SignFlag = Output[15];
+							ZeroFlag = Output == 0;
+							MemoryRW = 0;
+							Timer = 0;
+							Done = 1;
+						end:step2
+					endcase
+				end:OpFloat
 
 			endcase
 		end
