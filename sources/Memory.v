@@ -20,7 +20,7 @@ module Memory #(
 	genvar k; // generative aproach, we can have as many registers as we want (choose by M param)
 	localparam COUNT = 2**M;
 	for(k=0; k<COUNT; k=k+1) begin: registers
-		reg [N-1:0] value = 0;
+		reg [N-1:0] value = 1<<k;
 		
 		assign data = (RW || Address!=k)? {N{1'bz}} : value; // writes to local data-bus if current register is selected
 		
