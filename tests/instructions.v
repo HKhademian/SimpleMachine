@@ -1,7 +1,7 @@
 `timescale 1ns / 100ps
 
 module instructions #(
-	localparam N=8, M=2, COUNT=2**M, FREQ_T=2, OP_COUNT = 30
+	localparam N=8, M=2, COUNT=2**M, FREQ_T=2, OP_COUNT = 35
 );
 	
 	reg ResetN=0;

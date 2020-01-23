@@ -46,7 +46,7 @@ module Excutor #(
 	wire [2:0] R1Address, R2Address;
 	OneHotDecoder #(3) r1decode ( Part1, R1Address );
 	OneHotDecoder #(3) r2decode ( Part2, R2Address );
-	Floater floater ( Part1, Part2, Float );
+	Floater floater ( ResetN, Clock, Part1, Part2, Float );
 	
 	always @(negedge ResetN, posedge Clock)
 		if(!ResetN) begin
@@ -75,8 +75,8 @@ module Excutor #(
 						0: begin:step0 // Write CONST to R1
 							MemoryRW = 1;
 							MemorySelect = R1Address;
-							Output[15:8] = 0;
 							Output[7:0] = Part2;
+							Output[15:8] = {8{Output[7]}};
 							memValue = Output[7:0];
 							Timer = Timer+1;
 							Done = 0;
@@ -98,8 +98,8 @@ module Excutor #(
 							Done = 0;
 						end:step0
 						1: begin:step1 // Write readed value to R1
-							Output[15:8] = 0;
 							Output[7:0] = MemoryData;
+							Output[15:8] = {8{Output[7]}};
 							memValue = Output[7:0];
 							MemorySelect = R1Address;
 							MemoryRW = 1;
@@ -123,8 +123,8 @@ module Excutor #(
 							Done = 0;
 						end:step0
 						1: begin:step1 // write R1+CONST to R1
-							Output[15:8] = 0;
 							Output[7:0] = MemoryData + Part2;
+							Output[15:8] = {8{Output[7]}};
 							memValue = Output[7:0];
 							MemoryRW = 1;
 							MemorySelect = R1Address;
@@ -157,8 +157,8 @@ module Excutor #(
 							Done = 0;
 						end:step1
 						2: begin:step2 // write R1+R2 to R1
-							Output[15:8] = 0;
 							Output[7:0] = memValue + MemoryData;
+							Output[15:8] = {8{Output[7]}};
 							memValue = Output[7:0];
 							MemoryRW = 1;
 							MemorySelect = R1Address;
@@ -186,8 +186,8 @@ module Excutor #(
 						1: begin:step1 // write R1-CONST to R1
 							MemorySelect = R1Address;
 							MemoryRW = 1;
-							Output[15:8] = 0;
 							Output[7:0] = MemoryData - Part2;
+							Output[15:8] = {8{Output[7]}};
 							memValue = Output[7:0];
 							Timer = Timer+1;
 							Done = 0;
@@ -218,8 +218,8 @@ module Excutor #(
 							Done = 0;
 						end:step1
 						2: begin:step2 // write R1-R2 to R1
-							Output[15:8] = 0;
 							Output[7:0] = MemoryData - memValue;
+							Output[15:8] = {8{Output[7]}};
 							MemorySelect = R1Address;
 							MemoryRW = 1;
 							memValue = Output[7:0];
@@ -321,8 +321,8 @@ module Excutor #(
 							Done = 0;
 						end:step0
 						1: begin:step1 // write R1/CONST to R1
-							Output[15:8] = 0;
 							Output[7:0] = MemoryData / Part2;
+							Output[15:8] = {8{Output[7]}};
 							MemorySelect = R1Address;
 							MemoryRW = 1;
 							memValue = Output[7:0];
@@ -355,8 +355,8 @@ module Excutor #(
 							Done = 0;
 						end:step1
 						2: begin:step2 // write R1/R2 to R1
-							Output[15:8] = 0;
 							Output[7:0] = memValue / MemoryData;
+							Output[15:8] = {8{Output[7]}};
 							MemorySelect = R1Address;
 							MemoryRW = 1;
 							memValue = Output[7:0];
@@ -382,8 +382,8 @@ module Excutor #(
 							Done = 0;
 						end:step0
 						1: begin:step1 // Write R1<<CONST to R1
-							Output[15:8] = 0;
 							Output[7:0] = (MemoryData<<Part2);
+							Output[15:8] = {8{Output[7]}};
 							MemoryRW = 0;
 							MemorySelect = R1Address;
 							MemoryRW = 1;
@@ -408,8 +408,8 @@ module Excutor #(
 							Done = 0;
 						end:step0
 						1: begin:step1 // Write R1>>CONST to R1
-							Output[15:8] = 0;
 							Output[7:0] = (MemoryData>>Part2);
+							Output[15:8] = {8{Output[7]}};
 							MemoryRW = 0;
 							MemorySelect = R1Address;
 							MemoryRW = 1;
@@ -427,7 +427,12 @@ module Excutor #(
 				
 				OP_FLOAT: begin:OpFloat
 					case(Timer)
-						0: begin:step0 //save exponent to RC
+						0: begin:step0 //load floater
+							MemoryRW = 0;
+							Timer = Timer+1;
+							Done = 0;
+						end:step0
+						1: begin:step1 //save exponent to RC
 							Output = Float;
 							MemoryRW = 0;
 							MemorySelect = REG_C;
@@ -435,22 +440,22 @@ module Excutor #(
 							memValue = Output[14:7];
 							Timer = Timer+1;
 							Done = 0;
-						end:step0
-						1: begin:step1 // save mantis to RB
+						end:step1
+						2: begin:step2 // save mantis to RB
 							MemoryRW = 0;
 							MemorySelect = REG_B;
 							MemoryRW = 1;
 							memValue = {0, Output[6:0]};
 							Timer = Timer+1;
 							Done = 0;
-						end:step1
-						2: begin:step2 // Signal DONE
+						end:step2
+						3: begin:step3 // Signal DONE
 							SignFlag = Output[15];
 							ZeroFlag = Output == 0;
 							MemoryRW = 0;
 							Timer = 0;
 							Done = 1;
-						end:step2
+						end:step3
 					endcase
 				end:OpFloat
 
